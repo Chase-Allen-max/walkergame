@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seahawks Gridiron</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#002244">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gridiron">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{color-scheme:dark;--bg:#06182b;--card:#0e2640;--ink:#f2f6fa;--mut:#9fb2c6;--g:#69BE28;--line:#24456b;--btn:#173a5f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation;user-select:none;-webkit-user-select:none}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Trebuchet MS",Verdana,Arial,sans-serif}
+.w{max-width:560px;margin:0 auto;padding:12px}
+h1{margin:6px 0 2px;font:900 30px/1.05 Impact,"Arial Black",sans-serif;letter-spacing:.5px}
+h1 span{color:var(--g)}
+.sub{color:var(--mut);margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+button,select{font:inherit;color:var(--ink);background:var(--btn);border:1px solid #2f5b88;border-radius:12px;padding:12px;min-height:48px;cursor:pointer;text-align:left}
+select{width:100%;margin:6px 0 12px}
+button small{display:block;color:var(--mut);font-size:12px}
+button:active{transform:scale(.98)}
+button:focus-visible,select:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+.go{background:var(--g);color:#072308;border-color:var(--g);font-weight:700;width:100%;text-align:center}
+.go small{color:#12400f}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hd{font-weight:700;margin:0 0 8px}
+.ros{font-size:14px;color:var(--mut)}.ros b{color:var(--ink)}
+.sb{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:stretch;text-align:center}
+.tm{padding:8px;border-radius:12px;font-weight:800;border:2px solid #fff2}
+.tm .n{font-size:12px;opacity:.9}.tm .s{font-size:36px;line-height:1.1}
+.mid{align-self:center;min-width:92px}.q{font-size:13px;color:var(--mut)}.clk{font:900 28px Impact,"Arial Black",sans-serif}
+.info{text-align:center;margin:8px 0;font-weight:700}
+.field{position:relative;height:88px;border-radius:10px;overflow:hidden;background:#2b7a37;border:2px solid #fff4}
+.turf{position:absolute;left:8%;width:84%;top:0;bottom:0;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(10% - 2px),#fff7 calc(10% - 2px),#fff7 10%)}
+.ez{position:absolute;top:0;bottom:0;width:8%;display:flex;align-items:center;justify-content:center;font:900 11px Impact,Arial,sans-serif;writing-mode:vertical-rl;color:#fff;text-shadow:0 0 3px #000}
+.ez.r{right:0}.ez.l{left:0}
+.mk{position:absolute;top:0;bottom:0;width:3px;transition:left .5s}
+.los{background:#4aa3ff}.fd{background:#ffd400}
+.ball{position:absolute;top:50%;font-size:24px;transform:translate(-50%,-50%);transition:left .5s}
+.dir{position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:12px;color:#fffc;font-weight:700}
+.log div{padding:6px 0;border-top:1px solid var(--line);font-size:14px;color:var(--mut)}
+.log div:first-child{border-top:0;font-size:18px;font-weight:700;color:var(--ink)}
+.log .big{color:#ffe14d}.log .turn{color:#ff9a8a}.log .flag{color:#ffd400}
+.hot{color:var(--g)}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tools button{min-height:40px;padding:8px 10px;font-size:14px;text-align:center}
+.tools button.on{background:var(--g);color:#072308;border-color:var(--g);font-weight:700}
+</style></head>
+<body><div class="w">
+<div id="setup">
+ <h1>SEAHAWKS <span>GRIDIRON</span></h1>
+ <p class="sub">Call the plays. Win the game.</p>
+ <div class="card"><div class="hd">Your team: Seattle Seahawks</div>
+  <div class="ros"><b>Offense</b> — QB Winston · RB Roman · WR Hawken, Rosa, Evan · TE Freddy · K/P Reese<br><b>Defense</b> — DL Theo, Jordy · LB Daniel, Rory · DB Kyler, Jordan, Isaac</div></div>
+ <div class="card"><label for="opp" class="hd">Pick your opponent</label><select id="opp"></select>
+  <label for="ql" class="hd">Quarter length</label><select id="ql"><option value="180">3 minutes (quick)</option><option value="300" selected>5 minutes</option><option value="480">8 minutes</option><option value="900">15 minutes (real NFL)</option></select>
+  <button class="go" onclick="start()">🏈 Kick off</button></div>
+ <p class="sub" id="inst" hidden>📲 Tip: tap Share → <b>Add to Home Screen</b> to install this game.</p>
+ <p class="sub">NFL rules: 4 quarters, 4 downs for 10 yards, touchdowns, field goals, safeties, extra points, 2-point tries, penalties, timeouts, halftime and overtime. CFL teams play by NFL rules here.</p>
+</div>
+<div id="game" hidden>
+ <div class="card"><div class="sb" id="sb"></div><div class="info" id="info"></div>
+  <div class="field" id="field"></div></div>
+ <div class="card" id="ctl"></div>
+ <div class="card log" id="log"></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1)),pick=a=>a[ri(0,a.length-1)],chance=p=>Math.random()<p;
+const gauss=()=>{let u=0;for(let i=0;i<4;i++)u+=Math.random();return (u-2)/0.58};
+const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const pickW=w=>{const e=Object.entries(w);let r=Math.random()*e.reduce((s,x)=>s+x[1],0);for(const [k,v] of e){if((r-=v)<=0)return k}return e[0][0]};
+const SEA=['Seattle','Seahawks','SEA','#002244'];
+const T=("Arizona|Cardinals|ARI|#97233F|NFL,Atlanta|Falcons|ATL|#A71930|NFL,Baltimore|Ravens|BAL|#241773|NFL,Buffalo|Bills|BUF|#00338D|NFL,Carolina|Panthers|CAR|#0085CA|NFL,Chicago|Bears|CHI|#0B162A|NFL,Cincinnati|Bengals|CIN|#FB4F14|NFL,Cleveland|Browns|CLE|#FF3C00|NFL,Dallas|Cowboys|DAL|#003594|NFL,Denver|Broncos|DEN|#FB4F14|NFL,Detroit|Lions|DET|#0076B6|NFL,Green Bay|Packers|GB|#203731|NFL,Houston|Texans|HOU|#03202F|NFL,Indianapolis|Colts|IND|#002C5F|NFL,Jacksonville|Jaguars|JAX|#006778|NFL,Kansas City|Chiefs|KC|#E31837|NFL,Las Vegas|Raiders|LV|#A5ACAF|NFL,Los Angeles|Chargers|LAC|#0080C6|NFL,Los Angeles|Rams|LAR|#003594|NFL,Miami|Dolphins|MIA|#008E97|NFL,Minnesota|Vikings|MIN|#4F2683|NFL,New England|Patriots|NE|#002244|NFL,New Orleans|Saints|NO|#B59A54|NFL,New York|Giants|NYG|#0B2265|NFL,New York|Jets|NYJ|#125740|NFL,Philadelphia|Eagles|PHI|#004C54|NFL,Pittsburgh|Steelers|PIT|#FFB612|NFL,San Francisco|49ers|SF|#AA0000|NFL,Tampa Bay|Buccaneers|TB|#D50A0A|NFL,Tennessee|Titans|TEN|#4B92DB|NFL,Washington|Commanders|WAS|#5A1414|NFL,BC|Lions|BC|#F47B20|CFL,Calgary|Stampeders|CGY|#D52B1E|CFL,Edmonton|Elks|EDM|#00693C|CFL,Saskatchewan|Roughriders|SSK|#3E8E41|CFL,Winnipeg|Blue Bombers|WPG|#002F6C|CFL,Hamilton|Tiger-Cats|HAM|#FFB81C|CFL,Toronto|Argonauts|TOR|#1C3F94|CFL,Ottawa|Redblacks|OTT|#C8102E|CFL,Montréal|Alouettes|MTL|#003A70|CFL").split(",").map(s=>s.split("|"));
+$("opp").innerHTML=["NFL","CFL"].map(l=>`<optgroup label="${l}">`+T.map((t,i)=>t[4]===l?`<option value="${i}">${t[0]} ${t[1]}</option>`:"").join("")+"</optgroup>").join("");
+$("opp").value=T.findIndex(t=>t[1]==="49ers");
+
+const P={inside:{m:4,s:2.5},outside:{m:4.5,s:4.5},short:{m:7,s:3.5,c:.72,lo:0},med:{m:14,s:5,c:.55,lo:4},deep:{m:30,s:11,c:.38,lo:8},screen:{m:6,s:5,c:.8,lo:-2}};
+const RM={run:[-1.8,-1.2],blitz:[.8,1.8],zone:[.6,.6],deep:[1.4,1.2]};
+const CM={run:{short:.08,med:.1,deep:.12,screen:.08},blitz:{short:.06,med:.03,deep:.02,screen:.18},zone:{short:-.1,med:-.1,deep:-.02,screen:-.03},deep:{short:.06,med:-.12,deep:-.2,screen:.05}};
+const SK={run:-.02,blitz:.1,zone:0,deep:-.01};
+const IT={run:-.01,blitz:.01,zone:.02,deep:.02};
+const HOT=/\b(Winston|Roman|Hawken|Rosa|Evan|Freddy|Reese|Theo|Daniel|Kyler|Jordan|Rory|Jordy|Isaac)\b/g;
+let G=null;
+const nick=t=>G.t[t][1],abbr=t=>G.t[t][2],col=t=>G.t[t][3],oth=t=>t==="me"?"opp":"me",isMe=t=>t==="me";
+const qb=t=>isMe(t)?"Winston":`${nick(t)} QB`;
+const rb=t=>isMe(t)?"Roman":`${nick(t)} RB`;
+const rec=(t,c)=>isMe(t)?pick(c==="short"?["Freddy","Rosa","Evan","Roman"]:c==="screen"?["Roman","Rosa"]:c==="deep"?["Hawken","Evan","Rosa"]:["Rosa","Hawken","Evan","Freddy"]):`a ${nick(t)} receiver`;
+const rushr=t=>isMe(t)?pick(["Theo","Jordy","Rory","Daniel"]):`a ${nick(t)} pass rusher`;
+const dbk=t=>isMe(t)?pick(["Kyler","Jordan","Isaac","Daniel"]):`a ${nick(t)} defender`;
+const tkl=t=>isMe(t)?pick(["Daniel","Rory","Jordy","Theo","Jordan"]):`a ${nick(t)} defender`;
+const K=t=>isMe(t)?"Reese":`the ${nick(t)} kicker`;
+const ret=t=>isMe(t)?pick(["Hawken","Rosa","Evan"]):`a ${nick(t)} returner`;
+const yds=y=>y>0?`${y}-yard gain`:y===0?"no gain":`${-y}-yard loss`;
+const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+const ink=h=>{const n=parseInt(h.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255;return .299*r+.587*g+.114*b>150?"#111":"#fff"};
+const FGT=[[20,.99],[30,.95],[40,.87],[50,.72],[55,.55],[60,.38],[65,.2],[70,.08]];
+const fgP=d=>{if(d<=20)return .99;for(let i=1;i<FGT.length;i++){if(d<=FGT[i][0]){const a=FGT[i-1],b=FGT[i];return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0])}}return .04};
+
+function say(m,c=""){m=m.replace(HOT,'<b class="hot">$1</b>');G.log.unshift(`<div class="${c}">${m}</div>`)}
+function menu(){$("game").hidden=true;$("setup").hidden=false}
+function start(){
+ if(!$("setup").hidden){G0=+$("opp").value;Q0=+$("ql").value}
+ const rcv=chance(.5)?"me":"opp";
+ G={t:{me:SEA,opp:T[G0]},Q:Q0,score:{me:0,opp:0},q:1,clock:Q0,to:{me:3,opp:3},poss:rcv,pending:"kickoff",kt:oth(rcv),rcv1:rcv,ot:false,otP:{me:0,opp:0},over:false,plan:null,tout:false,hurry:false,goFor:false,yd:25,down:1,fd:35,toGo:10,log:[]};
+ say(`Coin toss: ${nick(rcv)} will receive the opening kickoff.`,"sys");
+ $("setup").hidden=true;$("game").hidden=false;render();
+}
+let G0=0,Q0=300;
+if("serviceWorker" in navigator&&window.isSecureContext)navigator.serviceWorker.register("sw.js").catch(()=>{});
+if(!(matchMedia("(display-mode: standalone)").matches||navigator.standalone))$("inst").hidden=false;
+
+function give(t,yd){
+ if(G.ot){if(G.otP.me&&G.otP.opp&&G.score.me!==G.score.opp)return over();G.otP[t]++}
+ G.poss=t;G.yd=cl(Math.round(yd),1,99);G.down=1;G.fd=Math.min(100,G.yd+10);G.toGo=G.fd-G.yd;G.goFor=false;G.plan=null;
+}
+function over(){G.over=true;const a=G.score.me,b=G.score.opp;say(a===b?`FINAL — it’s a tie, ${a}–${b}.`:a>b?`🏆 FINAL — SEAHAWKS WIN ${a}–${b}!`:`FINAL — ${nick("opp")} win ${b}–${a}.`,"big")}
+function burn(k,fl){let s={run:40,comp:36,inc:7,sack:38,pen:12,spike:3,kneel:40}[k]*(G.Q<480?.8:1)+ri(-3,3);const stop=k==="inc"||k==="spike";if(fl.hu&&!stop)s=Math.round(s*.45);if(fl.toTeam&&!stop)s=Math.min(s,8);G.clock=Math.max(0,G.clock-Math.max(2,s))}
+function nd(){G.down++;if(G.down>4){say(`Turnover on downs — ${nick(oth(G.poss))} take over.`,"turn");give(oth(G.poss),100-G.yd)}}
+
+function td(t,txt,def){G.score[t]+=6;say(`🏈 ${txt}`,"big");if(G.ot&&def)return over();G.pending="conv";G.ct=t}
+function afterScore(t){G.pending="kickoff";G.kt=t;if(G.ot&&G.otP.me&&G.otP.opp&&G.score.me!==G.score.opp)over()}
+function conv(kind){
+ const t=G.ct;let ok;
+ if(kind==="xp"){ok=chance(.95);if(ok)G.score[t]+=1;say(ok?`${K(t)} splits the uprights — extra point is good.`:`${K(t)} misses the extra point!`)}
+ else{ok=chance(.48);if(ok)G.score[t]+=2;say(ok?`${qb(t)} finds the end zone — the two-point try is GOOD!`:`The two-point try is stopped short — no good.`)}
+ afterScore(t);
+}
+function safety(){
+ const sc=oth(G.poss),c=G.poss;G.score[sc]+=2;say(`🚨 SAFETY! ${nick(sc)} get 2 points.`,"big");
+ if(G.ot&&G.otP.me&&G.otP.opp&&G.score.me!==G.score.opp)return over();
+ puntFrom(c,20,true);
+}
+function puntFrom(t,yd,free){
+ const d=free?ri(45,60):Math.round(cl(45+gauss()*6,28,66)),land=yd+d,r=oth(t),who=free?"Free kick":`${K(t)} punts`;
+ if(land>=100){say(`${who} — ${d} yards into the end zone. Touchback.`);give(r,20);return}
+ const rn=chance(.35)?0:Math.max(0,Math.round(6+gauss()*5)),rt=ret(r);
+ if(chance(.008)){td(r,`${rt} takes the punt all the way back — TOUCHDOWN!`);return}
+ say(`${who}, ${d} yards. ${rt} returns it ${rn}.`);give(r,Math.min(100-land+rn,99));
+}
+function doPunt(){G.clock=Math.max(0,G.clock-ri(5,10));puntFrom(G.poss,G.yd,false)}
+function doFG(rush){
+ const off=G.poss,df=oth(off),d=100-G.yd+17;G.clock=Math.max(0,G.clock-ri(4,8));
+ if(rush&&chance(.05)){say(`${dbk(df)} BLOCKS the kick!`,"turn");give(df,100-G.yd);return}
+ if(chance(fgP(d))){G.score[off]+=3;say(`🥅 ${K(off)} drills a ${d}-yard field goal! +3`,"big");afterScore(off)}
+ else{say(`${K(off)}’s ${d}-yard attempt is no good.`,"turn");give(df,Math.max(20,107-G.yd))}
+}
+function kickoff(k,type){
+ const r=oth(k);G.pending=null;G.clock=Math.max(0,G.clock-ri(4,7));
+ if(type==="onside"){
+  if(chance(.13)){say(`${K(k)} pops the onside kick — ${nick(k)} RECOVER it!`,"turn");give(k,50)}
+  else{say(`The onside kick fails — ${nick(r)} take over near midfield.`,"turn");give(r,53)}
+  return}
+ const rt=ret(r);
+ if(chance(.015)){td(r,`${rt} takes the kickoff all the way back — TOUCHDOWN!`);return}
+ if(chance(.6)){say(`${K(k)} kicks deep — touchback. ${nick(r)} start at the 35.`);give(r,35)}
+ else{const y=ri(18,40);say(`${rt} returns the kickoff to the ${y}.`);give(r,y)}
+}
+function endQ(){
+ if(G.ot)return over();
+ if(G.q===1||G.q===3){say(`End of quarter ${G.q}.`,"sys");G.q++;G.clock=G.Q;return render()}
+ if(G.q===2){say("⏸ HALFTIME! Timeouts reset.","sys");G.q=3;G.clock=G.Q;G.to={me:3,opp:3};G.pending="kickoff";G.kt=G.rcv1;return render()}
+ if(G.score.me!==G.score.opp)return over();
+ say("Tied after four quarters — OVERTIME!","big");G.ot=true;G.q="OT";G.clock=Math.min(600,G.Q*2);G.otP={me:0,opp:0};G.to={me:2,opp:2};G.pending="kickoff";G.kt=chance(.5)?"me":"opp";
+}
+function chk(){
+ if(G.over)return render();
+ if(G.pending==="conv")return render();
+ if(G.clock<=0)endQ();
+ render();
+}
+
+function adv(y,txt){
+ const ny=G.yd+y,df=oth(G.poss);
+ if(ny>=100){td(G.poss,`${txt(100-G.yd)} — TOUCHDOWN!`);return}
+ if(ny<=0){say(`${txt(y)} — SAFETY!`);return safety()}
+ G.yd=ny;let tag="";
+ if(ny>=G.fd){G.down=1;G.fd=Math.min(100,ny+10);tag=" ✅ FIRST DOWN!"}else G.down++;
+ G.toGo=G.fd-ny;say(txt(y)+tag);
+ if(G.down>4){say(`Turnover on downs! ${nick(df)} take over.`,"turn");give(df,100-ny)}
+}
+function penalty(call,fl){
+ const off=G.poss,df=oth(off),pass=["short","med","deep","screen"].includes(call),r=Math.random();let t;
+ if(r<.28)t={s:"off",n:"False start",y:-5};else if(r<.5)t={s:"off",n:"Offensive holding",y:-10};else if(r<.72)t={s:"def",n:"Offside",y:5};
+ else if(r<.85||!pass)t={s:"def",n:"Defensive holding",y:5,af:1};else if(r<.93)t={s:"def",n:"Pass interference",y:ri(8,28),af:1};else t={s:"def",n:"Roughing the passer",y:15,af:1};
+ let y=t.y;if(y>0&&G.yd+y>=100)y=Math.floor((100-G.yd)/2);if(y<0&&G.yd+y<1)y=-Math.floor(G.yd/2);
+ G.yd+=y;const f=!!t.af||G.yd>=G.fd;
+ if(f){G.down=1;G.fd=Math.min(100,G.yd+10)}G.toGo=G.fd-G.yd;
+ say(`🚩 FLAG! ${t.n} on the ${nick(t.s==="off"?off:df)}, ${Math.abs(y)} yards. ${f?"Automatic first down.":"Replay the down."}`,"flag");
+ burn("pen",fl);
+}
+function scrim(call,def,fl){
+ const O=G.poss,D=oth(O);
+ if(fl.toTeam){G.to[fl.toTeam]--;say(`⏱ Timeout, ${nick(fl.toTeam)}.`,"sys")}
+ if(call==="spike"){burn("spike",fl);say(`${qb(O)} spikes it to stop the clock.`);nd();return}
+ if(call==="kneel"){burn("kneel",fl);if(G.yd<=1){say(`${qb(O)} takes a knee.`);nd();return}return adv(-1,()=>`${qb(O)} kneels to run out the clock`)}
+ if(chance(.06))return penalty(call,fl);
+ if(call==="inside"||call==="outside"){
+  const i=call==="inside"?0:1;let y=Math.round(P[call].m+RM[def][i]+gauss()*P[call].s);
+  if(chance(.05+(def==="blitz"||def==="deep"?.03:0)))y+=ri(10,32);
+  y=Math.max(y,-4);burn("run",fl);
+  const who=isMe(O)?(call==="outside"&&chance(.25)?pick(["Hawken","Rosa"])+" on the jet sweep":"Roman"):rb(O),spot=G.yd+y;
+  if(chance(.015)&&spot<100&&spot>0){
+   if(chance(.5)){say(`💥 ${who} FUMBLES! ${dbk(D)} recovers it for ${nick(D)}!`,"turn");give(D,100-spot)}
+   else adv(y,()=>`${who} fumbles but falls on it, ${yds(y)}`);
+   return}
+  return adv(y,yy=>`${who} runs ${call==="inside"?"up the middle":"around the edge"}, ${yds(yy)}${yy<=2?` — stopped by ${tkl(D)}`:""}`);
+ }
+ const pc=cl(P[call].c+CM[def][call],.05,.95),skP=Math.max(.01,(call==="screen"?.02:.05)+SK[def]);
+ const itP=Math.max(.005,(call==="screen"?.01:.025)+((call==="med"||call==="deep")?IT[def]:IT[def]/2)),r=Math.random();
+ if(r<skP){
+  burn("sack",fl);const loss=ri(4,10);
+  if(chance(.08)&&G.yd-loss>0){say(`💥 ${rushr(D)} sacks ${qb(O)} and forces a FUMBLE — ${nick(D)} recover!`,"turn");give(D,100-(G.yd-loss))}
+  else adv(-loss,()=>`${rushr(D)} SACKS ${qb(O)} — ${loss}-yard loss!`);
+  return}
+ if(r<skP+itP){
+  burn("inc",fl);const air={short:ri(2,7),med:ri(10,18),deep:ri(25,42),screen:ri(1,4)}[call],at=G.yd+air,d=dbk(D);
+  if(at>=100){say(`${qb(O)} throws — INTERCEPTED in the end zone by ${d}! Touchback.`,"turn");give(D,20)}
+  else if(chance(.05)){td(D,`${d} intercepts ${qb(O)} and goes all the way — PICK-SIX!`,true)}
+  else{const rn=Math.max(0,Math.round(rnd(0,18)));say(`${qb(O)} throws — INTERCEPTED by ${d}! Returned ${rn} yards.`,"turn");give(D,Math.min(100-at+rn,99))}
+  return}
+ if(chance(pc)){
+  burn("comp",fl);let y=Math.round(P[call].m+gauss()*P[call].s);if(chance(.04))y+=ri(10,30);y=Math.max(y,P[call].lo);
+  const rc=rec(O,call);
+  return adv(y,yy=>`${qb(O)} connects with ${rc}, ${yds(yy)}${yy<=3&&yy>=0?` — brought down by ${tkl(D)}`:""}`);
+ }
+ burn("inc",fl);say(`${qb(O)} throws to ${rec(O,call)} — incomplete.${chance(.5)?` ${dbk(D)} breaks it up!`:""}`);nd();
+}
+
+function aiCall(){
+ const L=G.score.opp-G.score.me,late=G.q===4||G.q==="OT";
+ if(L>0&&G.q===4&&G.clock<=40*(4-G.down)+10&&G.down<4)return "kneel";
+ if(L<0&&(late||G.q===2)&&G.clock<120)return pick(["short","med","med","deep","screen"]);
+ const t=G.toGo;
+ return pickW(t<=2?{inside:5,outside:2,short:2,deep:1}:t<=5?{inside:3,outside:2,short:3,med:2,screen:1,deep:1}:t>=10?{short:3,med:3,deep:2,screen:1,outside:1}:{inside:2,outside:2,short:3,med:3,deep:1,screen:1});
+}
+function aiFourth(){
+ const L=G.score.opp-G.score.me,d=100-G.yd+17,late=G.q===4||G.q==="OT";
+ if(late&&L<0&&G.clock<90)return d<=54&&L>=-3?"fg":"go";
+ if(late&&L<=-4&&G.clock<240&&G.yd>35)return "go";
+ if(d<=54)return "fg";
+ if(G.yd>=45&&G.toGo<=3&&chance(.5))return "go";
+ return "punt";
+}
+function aiDef(){
+ const t=G.toGo;
+ return pickW(t<=2?{run:5,blitz:2,zone:1}:t>=10?{zone:4,deep:3,blitz:2,run:.5}:{run:2,blitz:2,zone:3,deep:1});
+}
+function aiFlags(){
+ const L=G.score.opp-G.score.me,tr=L<0&&(G.q===4||G.q===2||G.q==="OT")&&G.clock<120;
+ return {toTeam:tr&&G.to.opp>0&&chance(.3)?"opp":null,hu:tr};
+}
+const aiConv=()=>{const m=G.score.opp-G.score.me;return (G.q===4&&(m===-2||m===5))||chance(.08)?"two":"xp"};
+const aiKick=()=>(G.score.opp<G.score.me&&G.q===4&&G.clock<150&&chance(.6))?"onside":"deep";
+
+function P1(call){
+ const fl={toTeam:G.tout&&G.to.me>0?"me":null,hu:G.hurry};G.tout=false;G.goFor=false;
+ scrim(call,aiDef(),fl);chk();
+}
+function D1(def){
+ G.plan=null;const call=aiCall(),a=aiFlags(),fl={toTeam:G.tout&&G.to.me>0?"me":a.toTeam,hu:a.hu};G.tout=false;
+ scrim(call,def,fl);chk();
+}
+const PUNT=()=>{doPunt();chk()},FG=()=>{doFG(false);chk()},GO=()=>{G.goFor=true;render()};
+const CV=k=>{conv(k);chk()},oppConv=()=>CV(aiConv()),KO=t=>{kickoff("me",t);chk()},oppKO=()=>{kickoff("opp",aiKick());chk()};
+const OPP=k=>{G.plan=null;if(k==="punt")doPunt();else doFG(k==="fgrush");chk()};
+function TG(k){if(k==="tout"){if(G.to.me<=0)return;G.tout=!G.tout}else G.hurry=!G.hurry;render()}
+
+const fpos=(yd,t)=>8+(isMe(t)?yd:100-yd)*.84;
+const tmH=t=>{const c=col(t);return `<div class="tm" style="background:${c};color:${ink(c)}"><div class="n">${abbr(t)}${G.poss===t&&!G.over?" 🏈":""}</div><div class="s">${G.score[t]}</div><div class="n">Timeouts: ${G.to[t]}</div></div>`};
+const ord=["","1st","2nd","3rd","4th"];
+function spotTxt(){const o=G.poss,d=oth(o);return G.yd<50?`${abbr(o)} ${G.yd}`:G.yd>50?`${abbr(d)} ${100-G.yd}`:"midfield"}
+const tools=(extra)=>`<div class="tools"><button class="${G.tout?"on":""}" onclick="TG('tout')">⏱ Timeout (${G.to.me})</button>${extra||""}</div>`;
+function render(){
+ $("sb").innerHTML=tmH("me")+`<div class="mid"><div class="q">${G.q==="OT"?"Overtime":"Quarter "+G.q}</div><div class="clk">${fmt(G.clock)}</div></div>`+tmH("opp");
+ const live=!G.over&&!G.pending;
+ $("info").textContent=G.over?"Final":G.pending?"Between plays":`${ord[G.down]} & ${G.fd>=100?"Goal":G.toGo} · ball on ${spotTxt()}`;
+ const o=G.poss;
+ $("field").innerHTML=`<div class="turf"></div><div class="ez l" style="background:${col("me")}">${nick("me").toUpperCase()}</div><div class="ez r" style="background:${col("opp")};color:${ink(col("opp"))}">${nick("opp").toUpperCase()}</div>`
+  +(live?`<div class="mk fd" style="left:${fpos(G.fd,o)}%"></div><div class="mk los" style="left:${fpos(G.yd,o)}%"></div><div class="ball" style="left:${fpos(G.yd,o)}%">🏈</div><div class="dir">${isMe(o)?"Seahawks drive ➡":"⬅ "+nick("opp")+" drive"}</div>`:"");
+ let c="";
+ if(G.over)c=`<div class="hd">${G.score.me>G.score.opp?"🏆 You won! Great coaching.":G.score.me===G.score.opp?"A tie — what a battle.":"Tough loss. Run it back!"}</div><button class="go" onclick="start()">🔁 Rematch</button><div style="height:8px"></div><button onclick="menu()" style="width:100%">🏟 Pick a new opponent</button>`;
+ else if(G.pending==="conv"){
+  c=G.ct==="me"?`<div class="hd">Touchdown! Pick your try</div><div class="grid"><button onclick="CV('xp')">🥅 Extra point<small>Reese kicks · +1 · very likely</small></button><button onclick="CV('two')">💪 Go for 2<small>From the 2-yard line · about 50/50</small></button></div>`
+   :`<div class="hd">${nick("opp")} are going for the extra points</div><button class="go" onclick="oppConv()">▶ Watch their try</button>`}
+ else if(G.pending==="kickoff"){
+  c=G.kt==="me"?`<div class="hd">Kickoff — Reese</div><div class="grid"><button onclick="KO('deep')">🦵 Kick deep<small>Pin them back</small></button><button onclick="KO('onside')">🎯 Onside kick<small>Only about 13% to win it back</small></button></div>`
+   :`<button class="go" onclick="oppKO()">▶ ${nick("opp")} kick off — get ready to return it</button>`}
+ else if(o==="me"){
+  const d=100-G.yd+17,lead=G.score.me>G.score.opp;
+  if(G.down===4&&!G.goFor){
+   c=`<div class="hd">4th & ${G.fd>=100?"Goal":G.toGo} — big decision</div><div class="grid"><button onclick="PUNT()">🦵 Punt<small>Reese flips the field</small></button>${d<=70?`<button onclick="FG()">🥅 Field goal<small>${d} yards · about ${Math.round(fgP(d)*100)}% good</small></button>`:""}<button onclick="GO()">🔥 Go for it!<small>Risky — keep the ball</small></button></div>`+tools();
+  }else{
+   const b=(id,t,h)=>`<button onclick="P1('${id}')">${t}<small>${h}</small></button>`;
+   c=`<div class="hd">Your call, coach${G.down===4?" — going for it!":""}</div><div class="grid">`+b("inside","🏃 Run inside","Safe, steady yards")+b("outside","💨 Run outside","Bigger gains, a bit risky")+b("short","🎯 Short pass","Quick and reliable")+b("med","📏 Medium pass","Good yards, some risk")+b("deep","🚀 Deep bomb","Big play or incompletion")+b("screen","🪤 Screen pass","Beats the blitz")+`</div>`
+    +tools(`<button class="${G.hurry?"on":""}" onclick="TG('hurry')">⚡ Hurry-up</button><button onclick="P1('spike')">🛑 Spike</button>${lead?`<button onclick="P1('kneel')">🏁 Kneel</button>`:""}`);
+  }
+ }else{
+  if(G.down===4&&!G.plan)G.plan={kind:aiFourth()};
+  const pl=G.plan;
+  if(pl&&pl.kind==="punt")c=`<div class="hd">4th down — ${nick("opp")} are punting</div><button class="go" onclick="OPP('punt')">▶ Get ready to return it</button>`;
+  else if(pl&&pl.kind==="fg")c=`<div class="hd">${nick("opp")} line up for a ${100-G.yd+17}-yard field goal</div><div class="grid"><button onclick="OPP('fgrush')">🛡 Rush the kick<small>Small chance to block it</small></button><button onclick="OPP('fg')">👀 Watch<small>Fingers crossed</small></button></div>`;
+  else{
+   const b=(id,t,h)=>`<button onclick="D1('${id}')">${t}<small>${h}</small></button>`;
+   c=`<div class="hd">${nick("opp")} have the ball — ${ord[G.down]} & ${G.fd>=100?"Goal":G.toGo}${pl?" (they’re going for it!)":""}</div><div class="grid">`+b("run","🧱 Stop the run","Stacks the middle")+b("blitz","⚡ Blitz!","Sacks, but big plays")+b("zone","🕸 Zone coverage","Smothers short passes")+b("deep","🛡 Deep safeties","Stops the bomb")+`</div>`+tools();
+  }
+ }
+ $("ctl").innerHTML=c;
+ $("log").innerHTML=G.log.slice(0,7).join("");
+}
+</script></body></html>

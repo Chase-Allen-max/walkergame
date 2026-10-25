@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Walker's Dinosaur Adventure</title>
+  <meta name="description" content="A friendly dinosaur running game for Walker.">
+  <meta name="theme-color" content="#3fa34d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dino Adventure">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" aria-label="Game area. Tap anywhere to jump."></canvas>
+
+    <!-- Gameplay HUD -->
+    <div id="hud" class="hud" hidden>
+      <div class="hud-top">
+        <div class="hud-pill hud-score" aria-live="off">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z" fill="#ffd23f" stroke="#c46f00" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <span id="score">0</span>
+        </div>
+        <div class="hud-pill hud-hearts" id="hearts" role="img" aria-label="3 hearts left"></div>
+        <div class="hud-pill hud-level">
+          <div id="levelName" class="level-name">Fern Valley</div>
+          <div class="progress" id="progress" role="progressbar" aria-label="Level progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress-fill" id="progressFill"></div>
+            <div class="progress-dino" id="progressDino"></div>
+            <div class="progress-flag" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M3 1v14" stroke="#5b3517" stroke-width="2"/><path d="M4 2h9l-2.5 3 2.5 3H4z" fill="#ff6b6b"/></svg>
+            </div>
+          </div>
+          <div id="distance" class="distance" hidden></div>
+        </div>
+        <button id="btnPause" class="icon-btn" type="button" aria-label="Pause">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>
+        </button>
+      </div>
+      <div id="tutorial" class="tutorial" hidden>
+        <span>Tap to jump!</span>
+      </div>
+      <div id="banner" class="banner" aria-live="polite"></div>
+      <button id="btnJump" class="jump-btn" type="button" aria-label="Jump">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l7 8h-4.5v8h-5v-8H5z" fill="currentColor"/></svg>
+        <span>Jump</span>
+      </button>
+    </div>
+
+    <!-- Welcome -->
+    <section id="screenHome" class="screen" aria-labelledby="homeTitle">
+      <div class="panel home-panel">
+        <h1 id="homeTitle" class="title"><span>Walker’s</span> Dinosaur Adventure</h1>
+        <canvas id="homeDino" class="home-dino" width="240" height="150" aria-hidden="true"></canvas>
+        <p class="instructions">Tap to jump. Collect stars. Watch out for rocks!</p>
+        <button id="btnPlay" class="btn btn-big btn-primary" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg>
+          Play
+        </button>
+
+        <div class="choices">
+        <div class="group" role="radiogroup" aria-labelledby="levelLabel">
+          <div id="levelLabel" class="group-label">Choose a place</div>
+          <div class="chips" id="levelChips"></div>
+        </div>
+
+        <div class="group" role="radiogroup" aria-labelledby="diffLabel">
+          <div id="diffLabel" class="group-label">Difficulty</div>
+          <div class="chips" id="diffChips">
+            <button type="button" class="chip" role="radio" data-diff="explorer">Explorer</button>
+            <button type="button" class="chip" role="radio" data-diff="adventurer">Adventurer</button>
+            <button type="button" class="chip" role="radio" data-diff="expert">Expert</button>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <button id="btnSoundHome" class="btn btn-small sound-toggle" type="button" aria-pressed="false">Sound: Off</button>
+          <button id="btnDiscoveries" class="btn btn-small" type="button">Dino Discoveries</button>
+        </div>
+        <p class="best">Personal best: <strong id="bestHome">0</strong></p>
+        <div class="row row-quiet">
+          <button id="btnInstall" class="link-btn" type="button">Install on iPhone</button>
+          <button id="btnReset" class="link-btn" type="button">Reset Progress</button>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pause -->
+    <section id="screenPause" class="screen" hidden aria-labelledby="pauseTitle">
+      <div class="panel">
+        <h2 id="pauseTitle">Paused</h2>
+        <button id="btnResume" class="btn btn-big btn-primary" type="button">Resume</button>
+        <button id="btnRestart" class="btn" type="button">Restart Level</button>
+        <button id="btnSoundPause" class="btn sound-toggle" type="button" aria-pressed="false">Sound: Off</button>
+        <button id="btnHomeFromPause" class="btn" type="button">Return Home</button>
+      </div>
+    </section>
+
+    <!-- Level complete -->
+    <section id="screenComplete" class="screen" hidden aria-labelledby="completeTitle">
+      <div class="panel celebrate">
+        <div class="col">
+        <h2 id="completeTitle">Great exploring, Walker!</h2>
+        <p id="explorerMsg" class="explorer-msg" hidden>You’re a Dino Explorer, Walker!</p>
+        <div class="stats">
+          <div class="stat"><span class="stat-ico star-ico" aria-hidden="true"></span><strong id="cStars">0</strong> stars</div>
+          <div class="stat"><span class="stat-ico bone-ico" aria-hidden="true"></span><strong id="cFossils">0</strong> fossils</div>
+        </div>
+        <p class="score-line">Score: <strong id="cScore">0</strong></p>
+        </div>
+        <div class="col">
+        <p id="cNew" class="new-discovery" hidden></p>
+        <div class="fact"><span class="fact-label">Dino fact</span><span id="cFact"></span></div>
+        <button id="btnNext" class="btn btn-big btn-primary" type="button">Next Level</button>
+        <button id="btnHomeFromComplete" class="btn" type="button">Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Game over -->
+    <section id="screenOver" class="screen" hidden aria-labelledby="overTitle">
+      <div class="panel">
+        <h2 id="overTitle">Great adventure, Walker! Try again?</h2>
+        <p class="score-line">Score: <strong id="oScore">0</strong></p>
+        <p class="score-line">Personal best: <strong id="oBest">0</strong></p>
+        <p id="oNewBest" class="new-discovery" hidden>New personal best!</p>
+        <p id="oNew" class="new-discovery" hidden></p>
+        <button id="btnTryAgain" class="btn btn-big btn-primary" type="button">Try Again</button>
+        <button id="btnHomeFromOver" class="btn" type="button">Home</button>
+      </div>
+    </section>
+
+    <!-- Dino Discoveries -->
+    <section id="screenDiscoveries" class="screen" hidden aria-labelledby="discTitle">
+      <div class="panel wide">
+        <h2 id="discTitle">Dino Discoveries</h2>
+        <p class="sub">Fossils found: <strong id="lifetimeFossils">0</strong></p>
+        <ul id="discList" class="disc-list"></ul>
+        <button id="btnBackFromDisc" class="btn btn-primary" type="button">Back</button>
+      </div>
+    </section>
+
+    <!-- Install help -->
+    <section id="screenInstall" class="screen" hidden aria-labelledby="installTitle">
+      <div class="panel wide">
+        <h2 id="installTitle">Install on iPhone</h2>
+        <ol class="steps">
+          <li>Open the published game link in <strong>Safari</strong>.</li>
+          <li>Tap <strong>Share</strong> (the square with an arrow).</li>
+          <li>Tap <strong>Add to Home Screen</strong>.</li>
+          <li>Leave <strong>Open as Web App</strong> turned on if you see it.</li>
+          <li>Tap <strong>Add</strong>.</li>
+        </ol>
+        <p class="note">iPhone doesn’t show an automatic install pop-up, so these steps are the way to add it.
+          After the first visit, the game can be played offline. Offline play needs the game to be hosted over
+          <strong>HTTPS</strong> (local testing on <code>localhost</code> also works).</p>
+        <button id="btnBackFromInstall" class="btn btn-primary" type="button">Back</button>
+      </div>
+    </section>
+
+    <!-- Reset confirm -->
+    <section id="screenReset" class="screen" hidden aria-labelledby="resetTitle" role="alertdialog" aria-describedby="resetDesc">
+      <div class="panel">
+        <h2 id="resetTitle">Reset progress?</h2>
+        <p id="resetDesc">This clears the personal best, fossils, discoveries and unlocked levels on this device.</p>
+        <button id="btnResetNo" class="btn btn-big btn-primary" type="button">Keep my progress</button>
+        <button id="btnResetYes" class="btn btn-danger" type="button">Yes, reset</button>
+      </div>
+    </section>
+
+    <div id="updateBanner" class="update-banner" hidden role="status">
+      <span>A new version is ready!</span>
+      <button id="btnUpdate" class="btn btn-small btn-primary" type="button">Update now</button>
+    </div>
+    <noscript><p class="noscript">This game needs JavaScript turned on.</p></noscript>
+  </div>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
