@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -21,6 +21,8 @@
   --body:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
   color-scheme:dark;
 }
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,summary,#menu{touch-action:manipulation}
 html,body{height:100%;background:var(--night);color:var(--fg);font-family:var(--body);overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 button{font-family:inherit;color:inherit;cursor:pointer}
@@ -836,7 +838,7 @@ function hidePanel(){$('#panel').hidden=true;}
 // ---------- render ----------
 const cv=$('#cv'), ctx=cv.getContext('2d'); let L={s:4,ox:0,oy:0,dpr:1,w:0,h:0};
 function layout(){
-  const dpr=Math.min(window.devicePixelRatio||1,2.5), w=innerWidth, h=innerHeight, cs=getComputedStyle($('#sa'));
+  const dpr=Math.min(window.devicePixelRatio||1,2.5), vv=window.visualViewport, w=Math.round(vv?vv.width:innerWidth), h=Math.round(vv?vv.height:innerHeight), cs=getComputedStyle($('#sa'));
   const st=parseFloat(cs.paddingTop)||0, sb=parseFloat(cs.paddingBottom)||0, sl=parseFloat(cs.paddingLeft)||0, sr=parseFloat(cs.paddingRight)||0;
   cv.width=w*dpr; cv.height=h*dpr;
   const top=st+48, aw=w-sl-sr-12, ah=h-top-sb-8, s=Math.min(aw/W,ah/H);
@@ -988,7 +990,9 @@ $('#resetStats').onclick=function(){
 };
 
 $('#pauseBtn').onclick=()=>{audioInit();togglePause();};
-addEventListener('resize',()=>{if(G) layout();});
+// iPhones report the old size for a moment after rotating, so measure again once it settles
+const relayout=()=>{if(!G)return;layout();clearTimeout(relayout.t);relayout.t=setTimeout(()=>G&&layout(),350)};
+addEventListener('resize',relayout);addEventListener('orientationchange',relayout);window.visualViewport?.addEventListener('resize',relayout);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&G&&!G.paused&&G.state!=='final'&&G.state!=='break') togglePause(); else if(!document.hidden&&G) getWake();});
 })();
 </script>
