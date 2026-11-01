@@ -8,6 +8,8 @@ Play: https://chase-allen-max.github.io/walkergame/
 | Walker's Dinosaur Adventure | `dinosaur/` |
 | Walker's Rink | `hockey/` |
 | Birkley's Doll Workshop | `dolls/` |
+| Forest of Spinjitzu | `ninjago/` |
+| Dirt Bike Stunt Course | `dirtbike/` |
 
 Each game is a standalone web app that installs to a phone's home screen and works offline.
 
